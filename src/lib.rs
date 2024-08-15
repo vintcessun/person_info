@@ -1,6 +1,6 @@
 mod person;
 
-pub use person::{Person, Persons, Relation};
+pub use person::*;
 
 #[cfg(test)]
 mod tests {
