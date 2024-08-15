@@ -1,6 +1,7 @@
-mod person;
+mod information;
+mod process;
 
-pub use person::*;
+pub use information::*;
 
 #[cfg(test)]
 mod tests {
@@ -14,6 +15,7 @@ mod tests {
         let persons_str = format!("{}",persons);
         println!("{}",&persons_str);
         let return_persons:Persons = serde_json::from_str(persons_str.as_str()).unwrap();
-        println!("{}",&return_persons)
+        println!("{}",&return_persons);
+        println!("{:?}",persons_str == return_persons.to_string());
     }
 }
