@@ -9,6 +9,11 @@ mod tests {
     #[test]
     fn it_works() {
         let person = Person::new("xxx".to_string());
-        println!("{}",person);
+        let mut persons = Persons::new();
+        persons.push(person);
+        let persons_str = format!("{}",persons);
+        println!("{}",&persons_str);
+        let return_persons:Persons = serde_json::from_str(persons_str.as_str()).unwrap();
+        println!("{}",&return_persons)
     }
 }
