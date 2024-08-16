@@ -1,7 +1,7 @@
 [package]
 name = "person_info"
-version = "0.1.5"
-edition = "2021"
+version = "0.1.6"
+edition = "2021" 
 license = "MIT OR Apache-2.0"
 description = "一个封装好的自用库"
 
