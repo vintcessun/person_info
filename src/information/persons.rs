@@ -1,12 +1,13 @@
 use std::ops::{Add, AddAssign, Index, IndexMut};
-use serde::{Deserialize, Serialize};
+use serde::ser::{Serialize, Serializer, SerializeSeq};
+use serde::de::{self, Deserialize, Deserializer, Visitor, SeqAccess, MapAccess};
 use std::fmt::{Formatter, Display, Result};
 use std::cmp::PartialEq;
 use std::iter::{IntoIterator, Iterator};
 use super::person::Person;
 use crate::process::*;
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Clone)]
 pub struct Persons{//众人信息
     persons: Vec<Person>,
 }
@@ -254,6 +255,46 @@ impl IntoIterator for Persons{
 impl Default for Persons{
     fn default() -> Self {
         Self::new()
+    }
+}
+
+impl Serialize for Persons{
+    fn serialize<S>(&self, serializer: S) -> std::result::Result<S::Ok, S::Error>
+        where
+            S: Serializer {
+        let mut seq = serializer.serialize_seq(Some(self.persons.len()))?;
+        for person in &self.persons{
+            seq.serialize_element(person)?;
+        }
+        seq.end()
+    }
+}
+
+impl<'de> Deserialize<'de> for Persons{
+    fn deserialize<D>(deserializer: D) -> std::result::Result<Self, D::Error>
+        where
+            D: Deserializer<'de> {
+        deserializer.deserialize_seq(PersonsVisitor)
+    }
+}
+
+pub struct PersonsVisitor;
+
+impl<'de> Visitor<'de> for PersonsVisitor{
+    type Value = Persons;
+
+    fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+        formatter.write_str("The Persons is not the correct form")
+    }
+
+    fn visit_seq<A>(self, mut seq: A) -> std::result::Result<Self::Value, A::Error>
+        where
+            A: SeqAccess<'de>, {
+        let mut persons = Persons::with_capacity(seq.size_hint().unwrap_or(0));
+        while let Some(data) = seq.next_element()?{
+            persons.push(data);
+        }
+        Ok(persons)
     }
 }
 
