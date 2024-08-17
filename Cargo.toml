@@ -1,10 +1,11 @@
 [package]
 name = "person_info"
-version = "0.1.6"
+version = "0.1.7"
 edition = "2021" 
 license = "MIT OR Apache-2.0"
 description = "一个封装好的自用库"
 
 [dependencies]
+anyhow = "1.0.86"
 serde = {version = "1.0.207", features = ["derive"]}
 serde_json = "1.0.124"

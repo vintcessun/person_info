@@ -1,76 +1,69 @@
-use std::ops::{Add, AddAssign};
-use serde::{Deserialize, Serialize};
-use std::fmt::{Formatter, Display, Result};
-use std::cmp::PartialEq;
 use super::duration::Duration;
 use crate::process::*;
+use serde::{Deserialize, Serialize};
+use std::cmp::PartialEq;
+use std::fmt::{Display, Formatter, Result};
+use std::ops::{Add, AddAssign};
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
-pub struct Job{//职位
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Default)]
+pub struct Job {
+    //职位
     pub name: String,
     pub duration: Duration,
 }
 
-impl Job{
-    pub fn new()->Self{
-        Self{name:"".to_string(),duration:Duration::new()}
+impl Job {
+    pub fn new() -> Self {
+        Self {
+            name: "".to_string(),
+            duration: Duration::new(),
+        }
     }
 
-    pub fn builder(name: String, duration: Duration)->Self{
-        Self{name,duration}
+    pub fn builder(name: String, duration: Duration) -> Self {
+        Self { name, duration }
     }
 
-    pub fn is_empty(&self)->bool{
-        self.name.is_empty() &&
-        self.duration.is_empty()
+    pub fn is_empty(&self) -> bool {
+        self.name.is_empty() && self.duration.is_empty()
     }
 
-    pub fn name(&self)->String{
+    pub fn name(&self) -> String {
         self.name.clone()
     }
 
-    pub fn duration(&self)->Duration{
+    pub fn duration(&self) -> Duration {
         self.duration.clone()
     }
 }
 
-impl Add for Job{
+impl Add for Job {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        if self.name == other.name{
-            Self{
+        if self.name == other.name {
+            Self {
                 name: self.name(),
-                duration: update::renew_duration(self.duration, other.duration)
+                duration: update::renew_duration(self.duration, other.duration),
             }
-        }
-        else{
+        } else {
             panic!("{}", errors::panic_not_same());
         }
     }
 }
 
-impl AddAssign for Job{
+impl AddAssign for Job {
     fn add_assign(&mut self, other: Self) {
         *self = self.clone() + other;
     }
 }
 
-impl Display for Job{
+impl Display for Job {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        write!(f, "{}", serde_json::to_string(self).unwrap_or(errors::display_error("Job")))
-    }
-}
-
-impl PartialEq for Job{
-    fn eq(&self, other: &Self) -> bool {
-        self.name == other.name &&
-        self.duration == other.duration
-    }
-}
-
-impl Default for Job{
-    fn default() -> Self {
-        Self::new()
+        write!(
+            f,
+            "{}",
+            serde_json::to_string(self).unwrap_or(errors::display_error("Job"))
+        )
     }
 }
