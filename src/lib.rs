@@ -31,6 +31,6 @@ mod tests {
         let mut persons = persons1.clone();
         persons += persons2;
 
-        println!("{}", persons);
+        println!("{}", persons.len());
     }
 }

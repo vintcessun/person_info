@@ -132,8 +132,14 @@ impl Display for Relation {
     }
 }
 
+impl EqualStatement<String> for Relation {
+    fn statement(&self) -> &String {
+        &self.name
+    }
+}
+
 impl PartialEq for Relation {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
+        self.statement() == other.statement()
     }
 }

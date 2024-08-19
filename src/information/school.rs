@@ -72,8 +72,14 @@ impl Display for School {
     }
 }
 
+impl EqualStatement<String> for School {
+    fn statement(&self) -> &String {
+        &self.name
+    }
+}
+
 impl PartialEq for School {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
+        self.statement() == other.statement()
     }
 }

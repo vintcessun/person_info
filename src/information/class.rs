@@ -95,8 +95,14 @@ impl Display for Class {
     }
 }
 
+impl EqualStatement<String> for Class {
+    fn statement(&self) -> &String {
+        &self.class
+    }
+}
+
 impl PartialEq for Class {
     fn eq(&self, other: &Self) -> bool {
-        self.class == other.class
+        self.statement() == other.statement()
     }
 }

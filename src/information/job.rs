@@ -73,8 +73,14 @@ impl Display for Job {
     }
 }
 
+impl EqualStatement<String> for Job {
+    fn statement(&self) -> &String {
+        &self.name
+    }
+}
+
 impl PartialEq for Job {
     fn eq(&self, other: &Self) -> bool {
-        self.name == other.name
+        self.statement() == other.statement()
     }
 }
