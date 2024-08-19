@@ -7,7 +7,7 @@ use std::cmp::PartialEq;
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, AddAssign};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Work {
     //工作经历
     pub company: Company,
@@ -56,7 +56,7 @@ impl Add for Work {
         Self {
             company: update::renew_company(self.company, other.company),
             duration: update::renew_duration(self.duration, other.duration),
-            job: update::add_vec(self.job, other.job),
+            job: update::add_vec_renew(self.job, other.job),
         }
     }
 }
@@ -74,5 +74,11 @@ impl Display for Work {
             "{}",
             serde_json::to_string(self).unwrap_or(errors::display_error("Work"))
         )
+    }
+}
+
+impl PartialEq for Work {
+    fn eq(&self, other: &Self) -> bool {
+        self.company == other.company
     }
 }

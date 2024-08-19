@@ -60,7 +60,7 @@ impl Persons {
     }
 
     pub fn extend(&mut self, other: Persons) {
-        self.persons = update::add_vec(self.persons(), other.persons);
+        self.persons = update::add_vec_renew(self.persons(), other.persons);
     }
 
     pub fn pop(&mut self) -> Option<Person> {
@@ -175,7 +175,7 @@ impl Add for Persons {
 
     fn add(self, other: Self) -> Self::Output {
         Self {
-            persons: update::add_vec(self.persons, other.persons),
+            persons: update::add_vec_renew(self.persons, other.persons),
         }
     }
 }

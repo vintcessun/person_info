@@ -8,7 +8,7 @@ use std::cmp::PartialEq;
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, AddAssign};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Person {
     //个人信息
     pub name: String,
@@ -95,17 +95,22 @@ impl Add for Person {
     type Output = Self;
 
     fn add(self, other: Self) -> Self {
-        if self.name == other.name {
-            Self {
-                name: self.name,
-                category: update::renew_tag(self.category, other.category),
-                from: update::renew_tag(self.from, other.from),
-                sex: update::renew_tag(self.sex, other.sex),
-                relations: update::add_vec(self.relations, other.relations),
-                education: update::add_vec(self.education, other.education),
-                work: update::add_vec(self.work, other.work),
-                id: update::renew_studentid(self.id, other.id),
-            }
+        let mut ret = Self {
+            name: self.name(),
+            category: update::renew_tag(self.category, other.category),
+            from: update::renew_tag(self.from, other.from),
+            sex: update::renew_tag(self.sex, other.sex),
+            relations: update::add_vec_renew(self.relations, other.relations),
+            education: update::add_vec_renew(self.education, other.education),
+            work: update::add_vec_renew(self.work, other.work),
+            id: update::renew_studentid(self.id, other.id),
+        };
+        //这里是明显倾向于保留原本状态的
+        if other.name.is_empty() || self.name == other.name {
+            ret
+        } else if self.name.is_empty() {
+            ret.name = other.name;
+            ret
         } else {
             panic!("{}", errors::panic_not_same());
         }
@@ -125,5 +130,11 @@ impl Display for Person {
             "{}",
             serde_json::to_string(self).unwrap_or(errors::display_error("Person"))
         )
+    }
+}
+
+impl PartialEq for Person {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
     }
 }

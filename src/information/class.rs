@@ -5,7 +5,7 @@ use std::cmp::PartialEq;
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, AddAssign};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Class {
     //班级信息
     pub class: String,
@@ -61,13 +61,18 @@ impl Add for Class {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        if self.class == other.class {
-            Self {
-                class: self.class,
-                class_qq: update::add_vec(self.class_qq, other.class_qq),
-                grade: update::renew_tag(self.grade, other.grade),
-                school: update::renew_school(self.school, other.school),
-            }
+        let mut ret = Self {
+            class: self.class(),
+            class_qq: update::add_vec(self.class_qq, other.class_qq),
+            grade: update::renew_tag(self.grade, other.grade),
+            school: update::renew_school(self.school, other.school),
+        };
+        //这里是明显倾向于保留原本状态的
+        if other.class.is_empty() || self.class == other.class {
+            ret
+        } else if self.class.is_empty() {
+            ret.class = other.class;
+            ret
         } else {
             panic!("{}", errors::panic_not_same())
         }
@@ -87,5 +92,11 @@ impl Display for Class {
             "{}",
             serde_json::to_string(self).unwrap_or(errors::display_error("Class"))
         )
+    }
+}
+
+impl PartialEq for Class {
+    fn eq(&self, other: &Self) -> bool {
+        self.class == other.class
     }
 }

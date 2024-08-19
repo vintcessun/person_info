@@ -5,7 +5,7 @@ use std::cmp::PartialEq;
 use std::fmt::{Display, Formatter, Result};
 use std::ops::{Add, AddAssign};
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Default)]
+#[derive(Debug, Deserialize, Serialize, Clone, Default)]
 pub struct Company {
     //公司信息
     pub name: String,
@@ -41,11 +41,16 @@ impl Add for Company {
     type Output = Self;
 
     fn add(self, other: Self) -> Self::Output {
-        if self.name == other.name {
-            Self {
-                name: self.name,
-                duration: update::renew_duration(self.duration, other.duration),
-            }
+        let mut ret = Self {
+            name: self.name(),
+            duration: update::renew_duration(self.duration, other.duration),
+        };
+        //这里是明显倾向于保留原本状态的
+        if other.name.is_empty() || self.name == other.name {
+            ret
+        } else if self.name.is_empty() {
+            ret.name = other.name;
+            ret
         } else {
             panic!("{}", errors::panic_not_same())
         }
@@ -65,5 +70,11 @@ impl Display for Company {
             "{}",
             serde_json::to_string(self).unwrap_or(errors::display_error("Company"))
         )
+    }
+}
+
+impl PartialEq for Company {
+    fn eq(&self, other: &Self) -> bool {
+        self.name == other.name
     }
 }
