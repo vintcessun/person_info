@@ -94,5 +94,5 @@ pub mod errors {
 }
 
 pub trait EqualStatement<T> {
-    fn statement<'a>(&'a self) -> &'a T;
+    fn statement(&self) -> &T;
 }
